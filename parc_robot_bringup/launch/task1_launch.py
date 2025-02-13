@@ -6,11 +6,13 @@ from launch import LaunchDescription
 from launch.actions import (
     AppendEnvironmentVariable,
     DeclareLaunchArgument,
+    ExecuteProcess,
     IncludeLaunchDescription,
     OpaqueFunction,
+    RegisterEventHandler,
     TimerAction,
 )
-
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
@@ -25,14 +27,16 @@ def generate_launch_description():
     pkg_description = FindPackageShare(package="parc_robot_description").find(
         "parc_robot_description"
     )
-    pkg_ros_ign_gazebo = FindPackageShare(package="ros_ign_gazebo").find(
-        "ros_ign_gazebo"
+    pkg_ros_gz_sim = FindPackageShare(package="ros_gz_sim").find(
+        "ros_gz_sim"
     )
 
-    bridge_params = os.path.join(pkg_path, "config/parc_robot_bridge.yaml")
+    bridge_params = os.path.join(pkg_path, "config/gz_bridge.yaml")
+    robot_controllers = os.path.join(pkg_path, "config/controllers.yaml")
     rviz_config_file = os.path.join(pkg_path, "rviz/task1.rviz")
     goal_location_sdf = os.path.join(pkg_path, "models/goal_location/model.sdf")
-    world_filename = "parc_task1.world"
+    world_filename = "empty.world"
+    # world_filename = "parc_task1.world"
     world_path = os.path.join(pkg_path, "worlds", world_filename)
     set_env_vars_resources = AppendEnvironmentVariable(
         "GZ_SIM_RESOURCE_PATH", os.path.join(pkg_path, "models")
@@ -74,7 +78,7 @@ def generate_launch_description():
     # Launch Gazebo
     start_gazebo_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(pkg_ros_ign_gazebo, "launch", "ign_gazebo.launch.py")]
+            [os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")]
         ),
         launch_arguments={
             "gz_args": ["-r -v4 ", world],
@@ -138,7 +142,7 @@ def generate_launch_description():
                         arguments=[
                             "-topic",
                             "robot_description",
-                            "-entity",
+                            "-name",
                             "parc_robot",
                             "-x",
                             spawn_x_val,
@@ -161,7 +165,7 @@ def generate_launch_description():
                         arguments=[
                             "-file",
                             goal_location_sdf,
-                            "-entity",
+                            "-name",
                             "goal_location",
                             "-x",
                             goal_x_val,
@@ -202,33 +206,44 @@ def generate_launch_description():
         arguments=["/right_camera/image_raw"],
         output="screen",
     )
+    
+    # Start Gazebo ROS ZED2 Center Image bridge
+    start_gazebo_ros_zed2_center_image_bridge_cmd = Node(
+        package="ros_gz_image",
+        executable="image_bridge",
+        arguments=["/zed2_center_camera/image_raw"],
+        output="screen",
+    )
+    
+    # Launch RViz
+    start_rviz_cmd = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        output="screen",
+        arguments=["-d", rviz_config_file],
+    )
 
     # Spawn robot_base_controller
-    start_robot_base_controller_cmd = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "robot_base_controller",
-            "--controller-manager",
-            "/controller_manager",
-        ],
+    start_robot_base_controller_cmd = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'robot_base_controller'],
+        output='screen'
     )
 
     # Delayed start_robot_base_controller_cmd action
     start_delayed_robot_base_controller_cmd = TimerAction(
-        period=4.0, actions=[start_robot_base_controller_cmd]
+        period=11.0, actions=[start_robot_base_controller_cmd]
     )
 
     # Spawn joint_state_broadcaser
-    start_joint_broadcaster_cmd = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_broadcaster", "--controller-manager", "/controller_manager"],
+    start_joint_broadcaster_cmd = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'joint_broadcaster'],
+        output='screen'
     )
 
     # Delayed joint_broadcaster_cmd action
     start_delayed_joint_broadcaster_cmd = TimerAction(
-        period=4.0, actions=[start_joint_broadcaster_cmd]
+        period=11.0, actions=[start_joint_broadcaster_cmd]
     )
 
     # COMMENT OUT LATER
@@ -237,15 +252,6 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [os.path.join(pkg_path, "launch", "teleop_launch.py")]
         )
-    )
-
-    # Launch RViz
-    start_rviz_cmd = Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        output="screen",
-        arguments=["-d", rviz_config_file],
     )
 
     # Create the launch description and populate
@@ -266,7 +272,11 @@ def generate_launch_description():
     ld.add_action(start_gazebo_ros_bridge_cmd)
     ld.add_action(start_gazebo_ros_left_image_bridge_cmd)
     ld.add_action(start_gazebo_ros_right_image_bridge_cmd)
+    ld.add_action(start_gazebo_ros_zed2_center_image_bridge_cmd)
+    # ld.add_action(start_robot_base_controller_cmd)
+    # ld.add_action(start_joint_broadcaster_cmd)
     ld.add_action(start_delayed_robot_base_controller_cmd)
     ld.add_action(start_delayed_joint_broadcaster_cmd)
+    # ld.add_action(delay_rviz_after_joint_state_broadcaster_spawner)
 
     return ld

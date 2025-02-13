@@ -37,6 +37,11 @@
         name="gz::sim::systems::Contact">
     </plugin>
 
+    <plugin
+      filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat">
+    </plugin>
+
     <!-- <plugin name='gazebo_ros_state' filename='libgazebo_ros_state.so'> -->
     <!--   <ros> -->
     <!--     <namespace>/gazebo</namespace> -->

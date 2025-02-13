@@ -19,7 +19,7 @@
   <depend>pluginlib</depend>
   <depend>ros2_control</depend>
   <depend>ros2_controllers</depend>
-  <depend>ign_ros2_control</depend>
+  <depend>gz_ros2_control</depend>
   <depend>ros_gz_bridge</depend>
   <depend>ros_gz_image</depend>
   <depend>ros_gz_sim</depend>

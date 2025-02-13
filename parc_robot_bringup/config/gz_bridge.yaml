@@ -13,10 +13,8 @@
   direction: GZ_TO_ROS
 
 # Navsat_gpsfix configuration.
-# - topic_name: "/navsat"
 - ros_topic_name: "gps/fix"
   gz_topic_name: "gps/fix"
-  # ros_type_name: "gps_msgs/msg/GPSFix"
   ros_type_name: "sensor_msgs/msg/NavSatFix"
   gz_type_name: "gz.msgs.NavSat"
   direction: GZ_TO_ROS
@@ -47,6 +45,14 @@
   gz_topic_name: "right_camera/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# gz topic published for Sensors plugin (ZED2 camera center info)
+- ros_topic_name: "zed2_camera_center/camera_info"
+  gz_topic_name: "zed2_camera_center/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  # lazy: true
   direction: GZ_TO_ROS
 
 # gz topic published for Sensors plugin (ZED depth camera info)

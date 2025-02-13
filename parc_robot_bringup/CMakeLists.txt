@@ -7,7 +7,6 @@ find_package(ament_cmake_python REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(urdf REQUIRED)
 find_package(pluginlib REQUIRED)
-find_package(transmission_interface REQUIRED)
 
 install(
   DIRECTORY config launch models rviz worlds 

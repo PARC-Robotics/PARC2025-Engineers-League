@@ -25,20 +25,6 @@
       </collision>
     </link>
 
-    <!-- <link name="laser_frame">
-        <inertial>
-            <origin xyz="-0.00036659 0.00064155 -0.00027052" rpy="0 0 0" />
-            <mass value="0.25482" />
-            <inertia
-                ixx="8.9194E-05"
-                ixy="1.8116E-07"
-                ixz="3.6435E-08"
-                iyy="0.00018279"
-                iyz="2.423E-07"
-                izz="0.00011103" />
-        </inertial>
-    </link> -->
-
     <joint name="${name}_joint" type="fixed">
       <xacro:insert_block name="origin" />
       <parent link="${parent}" />
@@ -52,7 +38,7 @@
         <visualize>false</visualize>
         <update_rate>40</update_rate>
         <topic>scan</topic>
-        <gz_frame_id>base_scan</gz_frame_id>
+        <gz_frame_id>${name}_link</gz_frame_id>
         <lidar>
           <scan>
             <horizontal>
@@ -74,7 +60,5 @@
         </lidar>
       </sensor>
     </gazebo>
-
-    <!-- Be mindful of gazebo reference and sensor names -->
   </xacro:macro>
 </robot>

@@ -157,10 +157,49 @@
     </sensor>
   </gazebo>
 
+    <gazebo reference="base_link">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+    </gazebo>
+
+    <gazebo reference="front_right_wheel_link">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+      <kp>10000000.0</kp>
+      <kd>1.0</kd>
+      <minDepth>0.001</minDepth>
+    </gazebo>
+
+    <gazebo reference="front_left_wheel_link">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+      <kp>10000000.0</kp>
+      <kd>1.0</kd>
+      <minDepth>0.001</minDepth>
+    </gazebo>
+
+    <gazebo reference="rear_left_wheel_link">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+      <kp>10000000.0</kp>
+      <kd>1.0</kd>
+      <minDepth>0.001</minDepth>
+    </gazebo>
+
+    <gazebo reference="rear_right_wheel_link">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+      <kp>10000000.0</kp>
+      <kd>1.0</kd>
+      <minDepth>0.001</minDepth>
+    </gazebo>
+
   <!-- Sensor definitions -->
   <xacro:include filename="$(find parc_robot_description)/urdf/sensors.xacro" />
   <xacro:include filename="$(find parc_robot_description)/urdf/attachment.xacro" />
 	
   <!-- Gazebo definitions -->
-  <xacro:include filename="$(find parc_robot_description)/urdf/parc_robot_gazebo.xacro" />
+  <!-- <xacro:include filename="$(find parc_robot_description)/urdf/parc_robot_gazebo.xacro" /> -->
+  
+  <xacro:include filename="$(find parc_robot_description)/urdf/rename_me_gz_control.xacro" />
 </robot>

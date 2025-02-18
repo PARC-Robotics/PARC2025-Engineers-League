@@ -42,3 +42,5 @@ def gps_to_cartesian(goal_lat, goal_long):
     y = -y
 
     return x, y
+
+# print(gps_to_cartesian(49.900015168170825,8.89995490111862))

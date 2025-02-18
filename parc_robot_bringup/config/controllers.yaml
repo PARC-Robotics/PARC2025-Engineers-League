@@ -1,6 +1,6 @@
 controller_manager: # Node name
   ros__parameters:
-    update_rate: 30 
+    update_rate: 50 #30 
 
     robot_base_controller:
       type: diff_drive_controller/DiffDriveController
@@ -19,9 +19,8 @@ robot_base_controller:
     left_wheel_names: ['front_left_wheel', 'rear_left_wheel']
     right_wheel_names: ['front_right_wheel', 'rear_right_wheel']
 
-    wheels_per_side: 2 # 1
-    wheel_separation: 0.498
-    # wheel_separation: 2.0
+    wheels_per_side: 1 # 2
+    wheel_separation: 0.583 # 0.498
     wheel_radius: 0.165
 
     pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
@@ -40,13 +39,13 @@ robot_base_controller:
     linear.x.has_jerk_limits: true
     linear.x.max_velocity: 1.0 # m/s
     linear.x.min_velocity: -0.5 # m/s
-    linear.x.max_acceleration: 0.8 # m/s^2
-    linear.x.min_acceleration: -0.4 # m/s^2
+    linear.x.max_acceleration: 3.0 #0.8 # m/s^2
+    linear.x.min_acceleration: -3.0 #-0.4 # m/s^2
     linear.x.max_jerk: 5.0 # m/s^3
 
     angular.z.has_velocity_limits: true
     angular.z.has_acceleration_limits: true
     angular.z.has_jerk_limits: true
-    angular.z.max_velocity: 1.7 # rad/s
-    angular.z.max_acceleration: 1.5 # rad/s^2
+    angular.z.max_velocity: 2.0 #1.7 # rad/s
+    angular.z.max_acceleration: 6.0 #1.5 # rad/s^2
     angular.z.max_jerk: 2.5 # rad/s^3

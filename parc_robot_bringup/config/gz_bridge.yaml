@@ -52,7 +52,6 @@
   gz_topic_name: "zed2_camera_center/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
-  # lazy: true
   direction: GZ_TO_ROS
 
 # gz topic published for Sensors plugin (ZED2 left camera info)
@@ -60,31 +59,41 @@
   gz_topic_name: "zed2_left_raw/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
-  # lazy: true
+  direction: GZ_TO_ROS
+
+# gz topic published for Sensors plugin (ZED2 right raw camera info)
+- ros_topic_name: "zed2_right_raw/camera_info"
+  gz_topic_name: "zed2_right_raw/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# gz topic published for Sensors plugin (ZED2 right rect camera info)
+- ros_topic_name: "zed2_right/camera_info"
+  gz_topic_name: "zed2_right/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
 # gz topic published for Sensors plugin (ZED depth camera info)
-- ros_topic_name: "zed2_leftd/camera_info"
-  gz_topic_name: "zed2_leftd/camera_info"
+- ros_topic_name: "zed2_depth/camera_info"
+  gz_topic_name: "zed2_depth/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
-  # lazy: true
   direction: GZ_TO_ROS
 
 # gz topic published for Sensors plugin (ZED depth camera image)
-- ros_topic_name: "/rgbd_camera/depth_image"
-  gz_topic_name: "/rgbd_camera/depth_image"
+- ros_topic_name: "zed2_depth_camera/depth_image"
+  gz_topic_name: "zed2_depth_camera/depth_image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
-  # lazy: true
   direction: GZ_TO_ROS
 
 # gz topic published for Sensors plugin (ZED depth camera point cloud)
-- ros_topic_name: "/rgbd_camera/points"
-  gz_topic_name: "/rgbd_camera/points"
+- ros_topic_name: "zed2_depth_camera/points"
+  gz_topic_name: "zed2_depth_camera/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "gz.msgs.PointCloudPacked"
-  # lazy: true
   direction: GZ_TO_ROS
 
 # gz topic published for Sensors plugin (ZED2 right camera info)
@@ -92,7 +101,6 @@
   gz_topic_name: "zed2_right_raw/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
-  # lazy: true
   direction: GZ_TO_ROS
 
   # gz topic published by DiffDrive plugin

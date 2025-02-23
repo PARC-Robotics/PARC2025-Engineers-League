@@ -198,8 +198,10 @@
   <xacro:include filename="$(find parc_robot_description)/urdf/sensors.xacro" />
   <xacro:include filename="$(find parc_robot_description)/urdf/attachment.xacro" />
 	
-  <!-- Gazebo definitions -->
-  <!-- <xacro:include filename="$(find parc_robot_description)/urdf/parc_robot_gazebo.xacro" /> -->
+  <!-- Ros2 control -->
+  <!-- <xacro:include filename="$(find parc_robot_description)/urdf/parc_robot_ros2_control.xacro" /> -->
   
-  <xacro:include filename="$(find parc_robot_description)/urdf/rename_me_gz_control.xacro" />
+  <!-- Gazebo diff drive plugin control -->
+  <xacro:include filename="$(find parc_robot_description)/urdf/parc_robot_gz_control.xacro" />
+  
 </robot>

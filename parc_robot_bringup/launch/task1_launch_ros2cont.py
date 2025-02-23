@@ -6,10 +6,13 @@ from launch import LaunchDescription
 from launch.actions import (
     AppendEnvironmentVariable,
     DeclareLaunchArgument,
+    ExecuteProcess,
     IncludeLaunchDescription,
     OpaqueFunction,
+    RegisterEventHandler,
+    TimerAction,
 )
-
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
@@ -29,9 +32,15 @@ def generate_launch_description():
     )
 
     bridge_params = os.path.join(pkg_path, "config/gz_bridge.yaml")
+    robot_controllers = os.path.join(pkg_path, "config/controllers.yaml")
     rviz_config_file = os.path.join(pkg_path, "rviz/task1.rviz")
     goal_location_sdf = os.path.join(pkg_path, "models/goal_location/model.sdf")
     world_filename = "mini.sdf"
+    # world_filename = "gen3.sdf"
+    # world_filename = "gen2.sdf"
+    # world_filename = "generated.sdf"
+    # world_filename = "empty.world"
+    # world_filename = "parc_task1.world"
     world_path = os.path.join(pkg_path, "worlds", world_filename)
     set_env_vars_resources = AppendEnvironmentVariable(
         "GZ_SIM_RESOURCE_PATH", os.path.join(pkg_path, "models")
@@ -39,6 +48,7 @@ def generate_launch_description():
 
     # Launch configuration variables
     use_sim_time = LaunchConfiguration("use_sim_time")
+    use_ros2_control = LaunchConfiguration("use_ros2_control")
     world = LaunchConfiguration("world")
     route = LaunchConfiguration("route")
 
@@ -53,6 +63,12 @@ def generate_launch_description():
         name="world",
         default_value=world_path,
         description="Full path to the world model to load",
+    )
+
+    declare_ros2_control_cmd = DeclareLaunchArgument(
+        name="use_ros2_control",
+        default_value="False",
+        description="Use ros2_control if true",
     )
 
     declare_route_cmd = DeclareLaunchArgument(
@@ -210,46 +226,14 @@ def generate_launch_description():
         output="screen",
     )
      
-    # Start Gazebo ROS ZED2 Left Raw Image bridge
+     # Start Gazebo ROS ZED2 Left Raw Image bridge
     start_gazebo_ros_zed2_left_raw_image_bridge_cmd = Node(
         package="ros_gz_image",
         executable="image_bridge",
         arguments=["/zed2_left_raw/image_raw"],
         output="screen",
     )
-     
-    # Start Gazebo ROS ZED2 Right Raw Image bridge
-    start_gazebo_ros_zed2_right_raw_image_bridge_cmd = Node(
-        package="ros_gz_image",
-        executable="image_bridge",
-        arguments=["/zed2_right_raw/image_raw"],
-        output="screen",
-    )
 
-    # Start Gazebo ROS ZED2 Right Rectified Image bridge
-    start_gazebo_ros_zed2_right_rect_image_bridge_cmd = Node(
-        package="ros_gz_image",
-        executable="image_bridge",
-        arguments=["/zed2_right/image_rect"],
-        output="screen",
-    )
-
-    # Start Gazebo ROS ZED2 Depth Image bridge
-    start_gazebo_ros_zed2_depth_image_bridge_cmd = Node(
-        package="ros_gz_image",
-        executable="image_bridge",
-        arguments=["/zed2_depth_camera/depth_image"],
-        output="screen",
-    )
-
-    # Start Gazebo ROS ZED2 3D Point cloud bridge
-    start_gazebo_ros_zed2_point_cloud_bridge_cmd = Node(
-        package="ros_gz_image",
-        executable="image_bridge",
-        arguments=["/zed2_depth_camera/points"],
-        output="screen",
-    )
-    
     # Launch RViz
     start_rviz_cmd = Node(
         package="rviz2",
@@ -258,6 +242,49 @@ def generate_launch_description():
         output="screen",
         arguments=["-d", rviz_config_file],
     )
+
+    # Spawn robot_base_controller
+    start_robot_base_controller_cmd = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'robot_base_controller'],
+        output='screen'
+    )
+
+    # Delayed start_robot_base_controller_cmd action
+    start_delayed_robot_base_controller_cmd = TimerAction(
+        period=19.0, actions=[start_robot_base_controller_cmd]
+    )
+
+    # Spawn joint_state_broadcaser
+    start_joint_broadcaster_cmd = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'joint_broadcaster'],
+        output='screen'
+    )
+
+    # Delayed joint_broadcaster_cmd action
+    start_delayed_joint_broadcaster_cmd = TimerAction(
+        period=19.0, actions=[start_joint_broadcaster_cmd]
+    )
+
+    # delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
+    #     event_handler=OnProcessExit(
+    #         target_action=start_joint_broadcaster_cmd,
+    #         on_exit=[start_rviz_cmd],
+    #     )
+    # )
+
+    # start_delayed_joint_broadcaster_cmd = RegisterEventHandler(
+    #     event_handler=OnProcessExit(
+    #         target_action=start_robot_state_publisher_cmd,
+    #         on_exit=[start_joint_broadcaster_cmd],
+    #     )
+    # )
+
+    # start_delayed_robot_base_controller_cmd = RegisterEventHandler(
+    #     event_handler=OnProcessExit(
+    #         target_action=start_joint_broadcaster_cmd,
+    #         on_exit=[start_robot_base_controller_cmd],
+    #     )
+    # )
 
     # COMMENT OUT LATER
     # Start teleop node
@@ -272,6 +299,7 @@ def generate_launch_description():
 
     # Declare the launch options
     ld.add_action(declare_use_sim_time_cmd)
+    ld.add_action(declare_ros2_control_cmd)
     ld.add_action(declare_world_cmd)
     ld.add_action(declare_route_cmd)
     ld.add_action(set_env_vars_resources)
@@ -287,9 +315,12 @@ def generate_launch_description():
     ld.add_action(start_gazebo_ros_right_image_bridge_cmd)
     ld.add_action(start_gazebo_ros_zed2_center_image_bridge_cmd)
     ld.add_action(start_gazebo_ros_zed2_left_raw_image_bridge_cmd)
-    ld.add_action(start_gazebo_ros_zed2_right_raw_image_bridge_cmd)
-    ld.add_action(start_gazebo_ros_zed2_right_rect_image_bridge_cmd)
-    ld.add_action(start_gazebo_ros_zed2_depth_image_bridge_cmd)
-    ld.add_action(start_gazebo_ros_zed2_point_cloud_bridge_cmd)
+    # ld.add_action(start_robot_base_controller_cmd)
+    # ld.add_action(start_joint_broadcaster_cmd)
+
+    # ld.add_action(start_delayed_robot_base_controller_cmd)
+    # ld.add_action(start_delayed_joint_broadcaster_cmd)
+
+    # ld.add_action(delay_rviz_after_joint_state_broadcaster_spawner)
 
     return ld

@@ -10,12 +10,12 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
-  <depend>parc_robot_interfaces</depend>
-
   <exec_depend>parc_robot_description</exec_depend>
 
-  <depend>rclpy</depend>
+  <depend>parc_robot_interfaces</depend>
+
   <depend>controller_manager</depend>
+  <depend>rclpy</depend>
   <depend>pluginlib</depend>
   <depend>ros2_control</depend>
   <depend>robot_localization</depend>
@@ -24,6 +24,8 @@
   <depend>ros_gz_bridge</depend>
   <depend>ros_gz_image</depend>
   <depend>ros_gz_sim</depend>
+  <depend>image_transport_plugins</depend>
+  <depend>topic_tools</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

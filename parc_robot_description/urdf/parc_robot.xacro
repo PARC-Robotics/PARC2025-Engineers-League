@@ -48,15 +48,11 @@
   <gazebo reference="base_link">
     <sensor name="base_collision_sensor" type="contact">
       <contact>
-        <collision>base_footprint_fixed_joint_lump__base_collision_collision</collision>
+        <collision>base_footprint_fixed_joint_lump__base_link_collision</collision>
+        <topic>base_collisions</topic>
       </contact>
-      <plugin name="base_collision_sensor" filename="libgazebo_ros_bumper.so">
-        <ros>
-          <remapping>bumper_states:=base_collisions</remapping>
-        </ros>
-        <always_on>true</always_on>
-        <frame_name>base_link</frame_name>
-      </plugin>
+      <always_on>true</always_on>
+      <update_rate>5</update_rate>
     </sensor>
   </gazebo>
 
@@ -101,14 +97,10 @@
     <sensor name="front_left_collision_sensor" type="contact">
       <contact>
         <collision>front_left_wheel_link_collision</collision>
+        <topic>front_left_collisions</topic>
       </contact>
-      <plugin name="front_left_collision_sensor" filename="libgazebo_ros_bumper.so">
-        <ros>
-          <remapping>bumper_states:=front_left_collisions</remapping>
-        </ros>
-        <always_on>true</always_on>
-        <frame_name>front_left_wheel_link</frame_name>
-      </plugin>
+      <always_on>true</always_on>
+      <update_rate>5</update_rate>
     </sensor>
   </gazebo>
 
@@ -116,14 +108,10 @@
     <sensor name="front_right_collision_sensor" type="contact">
       <contact>
         <collision>front_right_wheel_link_collision</collision>
+        <topic>front_right_collisions</topic>
       </contact>
-      <plugin name="front_right_collision_sensor" filename="libgazebo_ros_bumper.so">
-        <ros>
-          <remapping>bumper_states:=front_right_collisions</remapping>
-        </ros>
-        <always_on>true</always_on>
-        <frame_name>front_right_wheel_link</frame_name>
-      </plugin>
+      <always_on>true</always_on>
+      <update_rate>5</update_rate>
     </sensor>
   </gazebo>
 
@@ -131,14 +119,10 @@
     <sensor name="rear_left_collision_sensor" type="contact">
       <contact>
         <collision>rear_left_wheel_link_collision</collision>
+        <topic>rear_left_collisions</topic>
       </contact>
-      <plugin name="rear_left_collision_sensor" filename="libgazebo_ros_bumper.so">
-        <ros>
-          <remapping>bumper_states:=rear_left_collisions</remapping>
-        </ros>
-        <always_on>true</always_on>
-        <frame_name>rear_left_wheel_link</frame_name>
-      </plugin>
+      <always_on>true</always_on>
+      <update_rate>5</update_rate>
     </sensor>
   </gazebo>
 
@@ -146,53 +130,49 @@
     <sensor name="rear_right_collision_sensor" type="contact">
       <contact>
         <collision>rear_right_wheel_link_collision</collision>
+        <topic>rear_right_collisions</topic>
       </contact>
-      <plugin name="rear_right_collision_sensor" filename="libgazebo_ros_bumper.so">
-        <ros>
-          <remapping>bumper_states:=rear_right_collisions</remapping>
-        </ros>
-        <always_on>true</always_on>
-        <frame_name>rear_right_wheel_link</frame_name>
-      </plugin>
+      <always_on>true</always_on>
+      <update_rate>5</update_rate>
     </sensor>
   </gazebo>
 
-    <gazebo reference="base_link">
-      <mu1>0.2</mu1>
-      <mu2>0.2</mu2>
-    </gazebo>
+  <gazebo reference="base_link">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
 
-    <gazebo reference="front_right_wheel_link">
-      <mu1>0.2</mu1>
-      <mu2>0.2</mu2>
-      <kp>10000000.0</kp>
-      <kd>1.0</kd>
-      <minDepth>0.001</minDepth>
-    </gazebo>
+  <gazebo reference="front_right_wheel_link">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+  </gazebo>
 
-    <gazebo reference="front_left_wheel_link">
-      <mu1>0.2</mu1>
-      <mu2>0.2</mu2>
-      <kp>10000000.0</kp>
-      <kd>1.0</kd>
-      <minDepth>0.001</minDepth>
-    </gazebo>
+  <gazebo reference="front_left_wheel_link">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+  </gazebo>
 
-    <gazebo reference="rear_left_wheel_link">
-      <mu1>0.2</mu1>
-      <mu2>0.2</mu2>
-      <kp>10000000.0</kp>
-      <kd>1.0</kd>
-      <minDepth>0.001</minDepth>
-    </gazebo>
+  <gazebo reference="rear_left_wheel_link">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+  </gazebo>
 
-    <gazebo reference="rear_right_wheel_link">
-      <mu1>0.2</mu1>
-      <mu2>0.2</mu2>
-      <kp>10000000.0</kp>
-      <kd>1.0</kd>
-      <minDepth>0.001</minDepth>
-    </gazebo>
+  <gazebo reference="rear_right_wheel_link">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+  </gazebo>
 
   <!-- Sensor definitions -->
   <xacro:include filename="$(find parc_robot_description)/urdf/sensors.xacro" />

@@ -10,6 +10,7 @@ from launch.actions import (
     OpaqueFunction,
 )
 
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
@@ -29,6 +30,7 @@ def generate_launch_description():
     )
 
     bridge_params = os.path.join(pkg_path, "config/gz_bridge.yaml")
+    ekf_params_file = os.path.join(pkg_path, "config/ekf.yaml")
     rviz_config_file = os.path.join(pkg_path, "rviz/task1.rviz")
     goal_location_sdf = os.path.join(pkg_path, "models/goal_location/model.sdf")
     world_filename = "mini.sdf"
@@ -38,15 +40,22 @@ def generate_launch_description():
     )
 
     # Launch configuration variables
-    use_sim_time = LaunchConfiguration("use_sim_time")
     world = LaunchConfiguration("world")
     route = LaunchConfiguration("route")
+    use_sim_time = LaunchConfiguration("use_sim_time")
+    use_robot_localization = LaunchConfiguration("use_robot_localization")
 
     # Declare launch arguments
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         name="use_sim_time",
         default_value="true",
         description="Use simulation (Gazebo) clock if true",
+    )
+
+    declare_use_robot_localization_cmd = DeclareLaunchArgument(
+        name="use_robot_localization",
+        default_value="False",
+        description="Use robot_localization package if true",
     )
 
     declare_world_cmd = DeclareLaunchArgument(
@@ -191,6 +200,10 @@ def generate_launch_description():
         package="ros_gz_image",
         executable="image_bridge",
         arguments=["/left_camera/image_raw"],
+        parameters=[
+            {
+                # 'use_sim_time': LaunchConfiguration('use_sim_time'),
+                'left_camera.image_raw.compressed.jpeg_quality': 75},],
         output="screen",
     )
 
@@ -243,13 +256,26 @@ def generate_launch_description():
     )
 
     # Start Gazebo ROS ZED2 3D Point cloud bridge
-    start_gazebo_ros_zed2_point_cloud_bridge_cmd = Node(
-        package="ros_gz_image",
-        executable="image_bridge",
-        arguments=["/zed2_depth_camera/points"],
-        output="screen",
-    )
+    # start_gazebo_ros_zed2_point_cloud_bridge_cmd = Node(
+    #     package="ros_gz_image",
+    #     executable="image_bridge",
+    #     arguments=["/zed2_depth_camera/points"],
+    #     output="screen",
+    # )
     
+    # Relay node to republish /camera/camera_info to /camera/image/camera_info
+    relay_camera_info_node = Node(
+        package='topic_tools',
+        executable='relay',
+        name='relay_camera_info',
+        output='screen',
+        # arguments=['camera/camera_info', 'camera/image/camera_info'],
+        arguments=['left_camera/camera_info', 'left_camera/image_raw/camera_info'],
+        # parameters=[
+        #     {'use_sim_time': LaunchConfiguration('use_sim_time')},
+        # ]
+    )
+
     # Launch RViz
     start_rviz_cmd = Node(
         package="rviz2",
@@ -257,6 +283,15 @@ def generate_launch_description():
         name="rviz2",
         output="screen",
         arguments=["-d", rviz_config_file],
+    )
+
+    # Start robot localization using an Extended Kalman Filter
+    start_robot_localization_cmd = Node(
+        condition=IfCondition(use_robot_localization),
+        package="robot_localization",
+        executable="ekf_node",
+        parameters=[ekf_params_file],
+        remappings=[("/odometry/filtered", "/odom")],
     )
 
     # COMMENT OUT LATER
@@ -271,9 +306,10 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     # Declare the launch options
-    ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_world_cmd)
     ld.add_action(declare_route_cmd)
+    ld.add_action(declare_use_sim_time_cmd)
+    ld.add_action(declare_use_robot_localization_cmd)
     ld.add_action(set_env_vars_resources)
 
     # Add any actions
@@ -290,6 +326,8 @@ def generate_launch_description():
     ld.add_action(start_gazebo_ros_zed2_right_raw_image_bridge_cmd)
     ld.add_action(start_gazebo_ros_zed2_right_rect_image_bridge_cmd)
     ld.add_action(start_gazebo_ros_zed2_depth_image_bridge_cmd)
-    ld.add_action(start_gazebo_ros_zed2_point_cloud_bridge_cmd)
+    # ld.add_action(start_gazebo_ros_zed2_point_cloud_bridge_cmd)
+    ld.add_action(relay_camera_info_node)
+    ld.add_action(start_robot_localization_cmd)
 
     return ld

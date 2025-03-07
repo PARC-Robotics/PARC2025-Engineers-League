@@ -12,8 +12,6 @@
 
   <exec_depend>parc_robot_description</exec_depend>
 
-  <depend>parc_robot_interfaces</depend>
-
   <depend>controller_manager</depend>
   <depend>rclpy</depend>
   <depend>pluginlib</depend>

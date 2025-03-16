@@ -19,8 +19,6 @@ ament_python_install_package(${PROJECT_NAME})
 # Install Python executables
 install(PROGRAMS
   scripts/load_task1_params.py
-  scripts/parc_robot_route.py
-  scripts/parc_robot_nav.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

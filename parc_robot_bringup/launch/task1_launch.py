@@ -33,15 +33,12 @@ def generate_launch_description():
     ekf_params_file = os.path.join(pkg_path, "config/ekf.yaml")
     rviz_config_file = os.path.join(pkg_path, "rviz/task1.rviz")
     goal_location_sdf = os.path.join(pkg_path, "models/goal_location/model.sdf")
-    world_filename = "mini.sdf"
-    world_path = os.path.join(pkg_path, "worlds", world_filename)
     set_env_vars_resources = AppendEnvironmentVariable(
         "GZ_SIM_RESOURCE_PATH", os.path.join(pkg_path, "models")
     )
 
     # Launch configuration variables
     world = LaunchConfiguration("world")
-    route = LaunchConfiguration("route")
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_robot_localization = LaunchConfiguration("use_robot_localization")
 
@@ -60,15 +57,9 @@ def generate_launch_description():
 
     declare_world_cmd = DeclareLaunchArgument(
         name="world",
-        default_value=world_path,
-        description="Full path to the world model to load",
-    )
-
-    declare_route_cmd = DeclareLaunchArgument(
-        name="route",
-        default_value="route1",
-        description="Route for robot navigation",
-        choices=["route1", "route2", "route3"],
+        default_value="world1",
+        description="World model to load",
+        choices=["world1", "world2", "world3"],
     )
 
     # Start robot state publisher
@@ -79,33 +70,25 @@ def generate_launch_description():
         launch_arguments={"use_sim_time": use_sim_time}.items(),
     )
 
-    # Launch Gazebo
-    start_gazebo_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")]
-        ),
-        launch_arguments={
-            "gz_args": ["-r -v4 ", world],
-            "on_exit_shutdown": "true",
-        }.items(),
-    )
-
-    # Function to spawn entities in Gazebo with pose dependent on route chosen
+    # Function to launch Gazebo and the PARC robot dependent on the world file chosen
     def spawn_gazebo_entities(context):
 
-        nonlocal route, goal_location_sdf
+        nonlocal world, goal_location_sdf
 
         # List of actions to be added to the launch description later
         actions = []
 
-        # Set path to route parameter yaml file
+        # Set path to world parameter yaml file
         params_file = os.path.join(
             pkg_path,
             "config/",
-            "task1_" + context.launch_configurations["route"] + "_params.yaml",
+            context.launch_configurations["world"] + "_params.yaml",
         )
 
-        # Open route specific yaml file
+        # Set path to world file
+        world_file = os.path.join(pkg_path, "worlds", context.launch_configurations["world"] + ".sdf")
+
+        # Open world specific yaml file
         if os.path.exists(params_file):
             with open(params_file, "r") as f:
                 params = yaml.safe_load(f)
@@ -118,22 +101,46 @@ def generate_launch_description():
                 goal_y_val = str(params["/**"]["ros__parameters"]["goal_y"])
                 goal_z_val = str(params["/**"]["ros__parameters"]["goal_z"])
 
-                route_params_file = LaunchConfiguration("route_params_file")
+                # Launch configuration variables for world params file and world path
+                world_params_file = LaunchConfiguration("world_params_file")
+                world_path = LaunchConfiguration("world_path_file")
 
-                # Declare route params file launch argument
+                # Declare world params file launch argument
                 actions.append(
                     DeclareLaunchArgument(
-                        name="route_params_file",
+                        name="world_params_file",
                         default_value=params_file,
+                        description="Full path to the parameter file of the respective loaded world"
                     )
                 )
 
-                # Load route parameters file
+                # Declare world path file launch argument
+                actions.append(
+                    DeclareLaunchArgument(
+                        name="world_path_file",
+                        default_value=world_file,
+                        description="Full path to the world model to load"
+                    )
+                )
+
+                # Load world parameters file
                 actions.append(
                     Node(
                         package="parc_robot_bringup",
                         executable="load_task1_params.py",
-                        parameters=[route_params_file],
+                        parameters=[world_params_file],
+                    )
+                )
+
+                # Launch Gazebo
+                actions.append(IncludeLaunchDescription(
+                    PythonLaunchDescriptionSource(
+                        [os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")]
+                    ),
+                    launch_arguments={
+                        "gz_args": ["-r -v4 ", world_path],
+                        "on_exit_shutdown": "true",
+                    }.items(),
                     )
                 )
 
@@ -307,13 +314,11 @@ def generate_launch_description():
 
     # Declare the launch options
     ld.add_action(declare_world_cmd)
-    ld.add_action(declare_route_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_use_robot_localization_cmd)
     ld.add_action(set_env_vars_resources)
 
     # Add any actions
-    ld.add_action(start_gazebo_cmd)
     ld.add_action(start_rviz_cmd)
     ld.add_action(start_teleop_cmd)
     ld.add_action(OpaqueFunction(function=spawn_gazebo_entities))

@@ -40,7 +40,6 @@ def generate_launch_description():
     # Launch configuration variables
     world = LaunchConfiguration("world")
     use_sim_time = LaunchConfiguration("use_sim_time")
-    use_robot_localization = LaunchConfiguration("use_robot_localization")
 
     # Declare launch arguments
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -127,7 +126,7 @@ def generate_launch_description():
                 actions.append(
                     Node(
                         package="parc_robot_bringup",
-                        executable="load_task1_params.py",
+                        executable="load_task_params.py",
                         parameters=[world_params_file],
                     )
                 )
@@ -292,23 +291,6 @@ def generate_launch_description():
         arguments=["-d", rviz_config_file],
     )
 
-    # Start robot localization using an Extended Kalman Filter
-    start_robot_localization_cmd = Node(
-        condition=IfCondition(use_robot_localization),
-        package="robot_localization",
-        executable="ekf_node",
-        parameters=[ekf_params_file],
-        remappings=[("/odometry/filtered", "/odom")],
-    )
-
-    # COMMENT OUT LATER
-    # Start teleop node
-    start_teleop_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [os.path.join(pkg_path, "launch", "teleop_launch.py")]
-        )
-    )
-
     # Create the launch description and populate
     ld = LaunchDescription()
 
@@ -320,7 +302,6 @@ def generate_launch_description():
 
     # Add any actions
     ld.add_action(start_rviz_cmd)
-    ld.add_action(start_teleop_cmd)
     ld.add_action(OpaqueFunction(function=spawn_gazebo_entities))
     ld.add_action(start_robot_state_publisher_cmd)
     ld.add_action(start_gazebo_ros_bridge_cmd)
@@ -333,6 +314,5 @@ def generate_launch_description():
     ld.add_action(start_gazebo_ros_zed2_depth_image_bridge_cmd)
     # ld.add_action(start_gazebo_ros_zed2_point_cloud_bridge_cmd)
     ld.add_action(relay_camera_info_node)
-    ld.add_action(start_robot_localization_cmd)
 
     return ld

@@ -3,7 +3,7 @@
 <sdf version="1.9">
   <world name="world2">
 
-<gui fullscreen="0">
+  <gui fullscreen="0">
 
   <!-- 3D scene -->
     <plugin filename="MinimalScene" name="3D View">
@@ -587,17 +587,6 @@
     <iterations>true</iterations>
   </plugin>
 
-
-    <!-- <plugin filename="GzSceneManager" name="Scene Manager">
-      <gz-gui>
-        <property key="resizable" type="bool">true</property>
-        <property key="width" type="double">5</property>
-        <property key="height" type="double">5</property>
-        <property key="state" type="string">floating</property>
-        <property key="showTitleBar" type="bool">false</property>
-      </gz-gui>
-    </plugin> -->
-    
     <!-- Entity tree -->
   <plugin filename="EntityTree" name="Entity tree">
     <gz-gui>

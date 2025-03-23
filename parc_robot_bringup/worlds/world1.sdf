@@ -2,8 +2,9 @@
 <!-- Seed: 1432 -->
 <sdf version="1.9">
   <world name="world1">
-<gui fullscreen="0">
 
+  <gui fullscreen="0">
+  
   <!-- 3D scene -->
     <plugin filename="MinimalScene" name="3D View">
       <gz-gui>
@@ -355,7 +356,7 @@
         <property key="pluginToolBarColor" type="string">#607d8b</property>
         <property key="pluginToolBarTextColor" type="string">#eeeeee</property>
     </gz-gui>
-</plugin>
+</plugin> -->
 
 <!-- No marker manager -->
 <!-- No spawn entities -->
@@ -586,17 +587,6 @@
     <iterations>true</iterations>
   </plugin>
 
-
-    <!-- <plugin filename="GzSceneManager" name="Scene Manager">
-      <gz-gui>
-        <property key="resizable" type="bool">true</property>
-        <property key="width" type="double">5</property>
-        <property key="height" type="double">5</property>
-        <property key="state" type="string">floating</property>
-        <property key="showTitleBar" type="bool">false</property>
-      </gz-gui>
-    </plugin> -->
-    
     <!-- Entity tree -->
   <plugin filename="EntityTree" name="Entity tree">
     <gz-gui>

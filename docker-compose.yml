@@ -1,7 +1,7 @@
 services:
   parc2025_ws:
     container_name: parc2025_ws
-    image: thenoobinventor/parc-eng-2025:latest
+    image: thenoobinventor/parc-eng-2025-ws:latest
     ports:
     - '8080:8080'
     stdin_open: true

@@ -8,7 +8,7 @@ Pan-African Robotics Competition (PARC) Engineer's League 2025 project developme
 
 ## Docker Usage
 
-The Ubuntu environment and ROS2 workspace and packages are also available in a containerized environment using docker. The following subsections details the process of setting this environment.
+The Ubuntu environment and ROS2 workspace and packages are also available in a containerized environment using docker. The following subsections details the process of setting this environment. This was tested on an Ubuntu 24.04 computer, compatibility with Windows has yet to be confirmed.
 
 <!-- Make more general for windows PCs later on in the docs -->
 

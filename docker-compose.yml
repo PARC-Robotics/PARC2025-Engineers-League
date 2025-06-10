@@ -16,7 +16,7 @@ services:
     tmpfs:
     - '/dev/shm:rw'
     volumes:
-    - '/home/noobinventor/ros2_ws/src:/home/ubuntu/ros2_ws/src'
+    - '/home/noobmsi/parc2025_ws/src:/home/ubuntu/ros2_ws/src'
     - '/etc/timezone:/etc/timezone:ro'
     environment:
     - DISPLAY_SIZEW=1920

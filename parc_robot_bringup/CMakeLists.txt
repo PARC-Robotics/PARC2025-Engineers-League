@@ -13,9 +13,13 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+
 # Install Python executables
 install(PROGRAMS
   scripts/load_task_params.py
+  scripts/get_robot_pose.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

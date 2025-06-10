@@ -291,6 +291,13 @@ def generate_launch_description():
         arguments=["-d", rviz_config_file],
     )
 
+    # Start teleop node
+    start_teleop_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [os.path.join(pkg_path, "launch", "teleop_launch.py")]
+        )
+    )
+
     # Create the launch description and populate
     ld = LaunchDescription()
 
@@ -302,6 +309,7 @@ def generate_launch_description():
 
     # Add any actions
     ld.add_action(start_rviz_cmd)
+    # ld.add_action(start_teleop_cmd)
     ld.add_action(OpaqueFunction(function=spawn_gazebo_entities))
     ld.add_action(start_robot_state_publisher_cmd)
     ld.add_action(start_gazebo_ros_bridge_cmd)

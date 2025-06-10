@@ -26,6 +26,13 @@
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
+# gz topic published by the Pose publisher plugin
+- ros_topic_name: "parc_robot/pose"
+  gz_topic_name: "parc_robot/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
 # gz topic published by Sensors plugin (Base Bumper Contact)
 - ros_topic_name: "base_collisions"
   gz_topic_name: "base_collisions"

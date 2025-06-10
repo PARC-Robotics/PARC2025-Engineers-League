@@ -9,3 +9,5 @@
     goal_x: 1.46
     goal_y: 3.58
     goal_z: 0.35
+
+    world: 'world2'

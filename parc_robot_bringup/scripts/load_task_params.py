@@ -18,6 +18,7 @@ class LoadTaskParams(Node):
                 ("goal_x", 0.0),
                 ("goal_y", 0.0),
                 ("goal_z", 0.0),
+                ("world", ""),
             ],
         )
 

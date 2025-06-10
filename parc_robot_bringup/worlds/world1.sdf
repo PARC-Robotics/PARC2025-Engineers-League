@@ -356,7 +356,7 @@
         <property key="pluginToolBarColor" type="string">#607d8b</property>
         <property key="pluginToolBarTextColor" type="string">#eeeeee</property>
     </gz-gui>
-</plugin> -->
+</plugin>
 
 <!-- No marker manager -->
 <!-- No spawn entities -->
